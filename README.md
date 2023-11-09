@@ -8,8 +8,8 @@ The AI Gym Tracker project represents an innovative web application that harness
 The primary goal of the application is to provide users with an interactive and highly motivating training environment. Using cutting-edge technologies such as artificial intelligence, computer vision for video analysis, and pose recognition, the application is able to count
 exercise repetitions in real time, while also providing precise and accurate feedback on the speed of execution of poses.
 To perform action prediction and process the stream of frames from the webcam, we developed and trained an accurate artificial intelligence
-model based on recurrent neural networks (RNNs) and Long Short-Term Memory (LSTM) neural networks. We created this model through a
-data collection phase during which we recorded a considerable number of videos of correctly performed exercises, thus creating an accurate custom training dataset. In this way through the use of the powerful Mediapipe library, we extracted the poses performed by the user in real
+model based on **recurrent neural networks (RNNs)** and **Long Short-Term Memory (LSTM)** neural networks. We created this model through a
+data collection phase during which we recorded a considerable number of videos of correctly performed exercises, thus creating an accurate custom training dataset. In this way through the use of the powerful **Mediapipe library**, we extracted the poses performed by the user in real
 time, determining the joints as a list of skeletal key points of the body
 
 ![Alt text](static/parkTraining.png)
