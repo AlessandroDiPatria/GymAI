@@ -1,7 +1,5 @@
 
 # AI Gym Tracker
-...
-
 
 ## Introduction
 
