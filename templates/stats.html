@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+		<script>
+			function formatTime(totalSeconds) {
+				var hours = Math.floor(totalSeconds / 3600);
+				var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
+				var seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+				if (hours < 10) { hours = "0" + hours; }
+				if (minutes < 10) { minutes = "0" + minutes; }
+				if (seconds < 10) { seconds = "0" + seconds; }
+				return hours + ":" + minutes + ":" + seconds;
+			}
+			
+			function getTotalSeconds() {
+				return localStorage.getItem("totalSeconds") || 0;
+			}
+			
+			window.onload = function() {
+				document.getElementById("timer").innerHTML = formatTime(getTotalSeconds());
+			}
+		</script>
+
+		<title>AI Gym Tracker</title>
+	</head>
+
+			<body>
+				<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+				
+
+
+    	<!-- Navbar -->
+    <nav class="navbar navbar-dark navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">AI Gym Tracker</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul style="margin-left: 0%;" class="navbar-nav ms-auto">
+            <a href="{{ url_for('gym', email=email, age=age, height=height, weight=weight, gender=gender) }}" id="restart-btn">
+            	<button class="btn btn-primary btn-lg" type="submit">Restart</button></a>
+            </a>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+
+	
+	<div class="container my-5" >
+		<div class="row  pe-lg-0 pt-lg-5 pb-lg-5 align-items-center rounded-3 border shadow-lg" style="margin-top:3%;padding-left:0px;padding:0px;">
+			<div class="col-lg-4 offset-lg pb-0 overflow-hidden shadow-lg" style="padding-left:0px;">
+				<img class="rounded-lg-3" src="/static/wellDone.jpeg"  style="margin: auto;" width="520">
+			</div>
+		  <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+			<h1 class="display-4 fw-bold lh-1 text-body-emphasis lead">Congratulations!</h1>
+			<p class="lead">Take a moment to relax and enjoy your achievements. If you want to continue training, simply press the button below to start a new session. And don't forget to check out the detailed statistics we've compiled for you to track your progress!</p>
+			<div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
+				<a href="{{ url_for('gym', email=email, age=age, height=height, weight=weight, gender=gender) }}" id="restart-btn">
+					<button class="btn btn-primary btn-lg px-4 me-md-2 fw-bold" type="submit">Restart</button></a>
+				</a>
+			 
+			  <a href="/" class="btn btn-outline-secondary btn-lg px-4">Home</a>
+			  
+			</div>
+			
+		  </div>
+		 
+		</div>
+	  </div>
+	  <div class="container my-5" >
+	  <div class="row  e-lg-0 pt-lg-2 pb-lg-2  rounded-3 border shadow-lg">
+	  <div class="container px-4 py-5" id="icon-grid">
+		<h2 class="pb-2 border-bottom">Statistics</h2>
+	
+		  <table class="table table-hover">
+					
+			
+				<thead>
+					
+					
+				<tr>
+					{% for key,value in diz.items() %}
+					<th scope="col">{{key|title}}</th>
+					{%  endfor   %}
+				  </tr>
+				  
+				
+
+				</thead>
+				<tbody>
+					
+					<tr>
+						{% for key,value in diz.items() %}
+					  <td scope="row">{{value}}</td>
+					  {%  endfor   %}
+					</tr>
+					
+			
+				</tbody>			
+			
+		
+			
+			<br>
+		</table>
+	  </div>
+	  <div class="px-4  text-center border-bottom">
+		<h1 class="display-4 fw-bold text-body-emphasis">{{kcal}} Kcal burned</h1>
+		<div class="col-lg-6 mx-auto">
+		  <p class="lead">Please note that these data are estimates and can vary based on factors such as gender, age, weight, and workout intensity.</p>
+		
+		  <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
+			
+		
+			<button type="button" class="btn btn-outline-secondary btn-lg px-4" data-bs-toggle="modal" data-bs-target="#modal-info">How we compute calories?</button>
+
+<div class="modal fade" id="modal-info" tabindex="-1" aria-labelledby="modal-info-label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-info-label">How we compute calories?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Our calorie calculation method is based on the assumption that on average 25 repetitions of an exercise correspond to the number of calories burned in 1 minute. We use this value to calculate the total number of calories burned during a workout by multiplying it with the number of repetitions performed. This method has been widely used and validated in several scientific studies.
+        <p>For more information, please consult our documentation.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+		  </div>
+		</div>
+		<div class="overflow-hidden" style="max-height: 30vh;">
+			
+		  
+			
+		</div>
+	  </div>
+	   <!-- 
+	  <button type="button" class="btn btn-outline-secondary btn-md  col-2 " style="margin-top: 1%;margin-left: 1%;">Send me the resume<img class="img" style="margin-left: 3%;"src="/static/icons/email.svg"></button> -->
+	  </div>
+	  
+	  </div>
+	  
+	
+
+	  <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+		<div class="row align-items-center g-lg-5 py-5">
+		  <div class="col-lg-7 text-center text-lg-start">
+			<h1 class="display-4 fw-bold lh-1 text-body-emphasis mb-3">Do you wanna save your result? 📧</h1>
+			<p class="col-lg-10 fs-4">Click the button and you will receive the report of your training in the specified email.</p>
+		  </div>
+		  <div class="col-md-10 mx-auto col-lg-5">
+			<form  method="post" action="/" class="p-4 p-md-5 border rounded-3 bg-body-tertiary">
+			  <div class="form-floating mb-3">
+				<input type="email" class="form-control" id="email" placeholder="name@example.com" value="{{ request.args.get('email') }}" disabled>
+
+				<label for="email">Email address</label>
+			  </div>
+			  
+			  <button class="w-100 btn btn-lg btn-primary" type="submit">Send the resume</button>
+			  <hr class="my-4">
+			  <small class="text-body-secondary">By clicking Sign up, you agree to the terms of use.</small>
+			</form>
+		  </div>
+		</div>
+	  </div>
+
+
+	  <footer class="bg-dark text-center text-white">
+		<!-- Grid container -->
+		<div class="container p-2">
+		  
+		</div>
+		<!-- Grid container -->
+
+		 <!-- Section: Links -->
+    <section class="mb-4">
+      <a href="#" class="text-white">Privacy Policy</a>
+      <a href="#" class="text-white">Terms of Use</a>
+    </section>
+    <!-- Section: Links -->
+	  
+		<!-- Footer -->
+  <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+    © 2023 | All rights reserved
+  </div>
+  <!-- Footer -->
+	  </footer>
+	 
+
+
+
+
+
+
+</html>

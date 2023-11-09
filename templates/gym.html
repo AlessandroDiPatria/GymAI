@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Gym Tracker</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
+    <!-- per le icone -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-...." crossorigin="anonymous" />
+ 
+
+    <script>
+        var totalSeconds = 0; //timer
+
+        //ricavo le variabili globali: diz, action (l'ultimo ex effettuato), reps (dell'ultimo ex) 
+        function updateData() {
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', '/get_data', true);
+          xhr.onload = function() {
+            if (xhr.status === 200) {
+              var response = JSON.parse(xhr.responseText);
+              var data = response[0];
+              var action = response[1];
+              var reps = response[2];
+              var msg = response[3];
+              var time_diff = response[4];
+
+              //ricavo nel template dove setterò il numero di ogni esercizio
+              for (var key in data) {
+                if (data.hasOwnProperty(key)) {
+                  var element = document.getElementById(key);
+                  if (element) {
+                    element.innerHTML = data[key];
+                    var footer = element.parentElement.parentElement.querySelector('.card-footer');
+                    if (footer) {
+                      footer.innerHTML = '<strong>' + data[key] + '</strong>';
+                    }
+                  }
+                }
+              }
+              var actionElement = document.getElementById("action");
+              if (actionElement) {
+                actionElement.innerHTML = action;
+              }
+              var repsElement = document.getElementById("reps");
+              if (repsElement) {
+                repsElement.innerHTML = reps;
+              }
+              var msgElement = document.getElementById("msg");
+              if (msgElement) {
+                msgElement.innerHTML = msg;
+              }
+              var timeElement = document.getElementById("time_diff");
+              if (timeElement) {
+                timeElement.innerHTML = time_diff;
+              }
+            }
+          };
+          xhr.send();
+        }
+
+
+
+        //funziona che invocata ad ogni secondo incrementa l'elemento "timer" 
+        function updateTime() {
+            var timerElement = document.getElementById('timer');
+            var seconds = parseInt(timerElement.getAttribute('data-timer'));
+            seconds++;
+            timerElement.setAttribute('data-timer', seconds);
+            timerElement.innerHTML = formatTime(seconds);
+            localStorage.setItem('totalSeconds', seconds);
+            totalSeconds = seconds;
+        }
+
+        //formatta il timer in versione hh/mm/ss
+        function formatTime(totalSeconds) {
+            var hours = Math.floor(totalSeconds / 3600);
+            var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
+            var seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+            if (hours < 10) { hours = "0" + hours; }
+            if (minutes < 10) { minutes = "0" + minutes; }
+            if (seconds < 10) { seconds = "0" + seconds; }
+            return hours + ":" + minutes + ":" + seconds;
+        }
+
+    
+        function startCountdown() {
+              var countdownElement = document.getElementById('countdown');
+              var countdownSeconds = parseInt(countdownElement.getAttribute('data-countdown'));
+              countdownSeconds--;
+              countdownElement.setAttribute('data-countdown', countdownSeconds);
+              countdownElement.innerHTML = countdownSeconds.toString();
+              
+              if (countdownSeconds == 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('countdown-container').style.display = 'none';
+                document.getElementById('timer-container').style.display = 'block';
+
+                setInterval(function() {
+                  updateData();
+                  updateTime();
+                }, 1000);
+
+                localStorage.setItem('totalSeconds', totalSeconds);
+              }
+
+        }
+
+        var start = new Audio('static/start.wav');
+        var countdown = new Audio('static/countdown.flac');
+
+        countdown.play();
+        var countdownInterval = setInterval(startCountdown, 1000);
+        countdown.addEventListener('ended', function() {
+          setTimeout(function() {
+            start.play();
+          }, 0); // 0 sec dopo
+        });
+
+    </script>
+
+</head>
+<body >
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg" style="background-color:black;height: 80px;">
+      <div class="container-fluid">
+        <a class="navbar-brand text-light" href="#">AI Gym Tracker</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul style="margin-left: 0%;" class="navbar-nav ms-auto">
+            <a href="{{ url_for('stats', email=email, age=age, height=height, weight=weight, gender=gender) }}" id="end-workout-btn">
+              <button class="btn btn-danger" type="submit">End Workout</button>
+            </a>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+
+<div style="background-image: url('../static/gym.jpg'); background-size:cover;background-position: center center; height: 100%;padding-bottom: 10%;">
+
+
+
+    <!-- Visualizzazione SOLO durante il countdown -->
+    <div class="container text-center pt-5" cd id="countdown-container" >
+        <div class="row justify-content-center">
+            <div class="container-fluid h-100" >
+                <div class="row justify-content-center align-items-center h-100">
+                    <div class="col-12 col-md-8 text-center">
+                        <div class="card" >
+                            <div class="card-header  d-flex justify-content-between align-items-center text-light" style="background-color:black">
+                                <h1 class="display-4">Get Ready!</h1>
+                                <h1 id="countdown" data-countdown="10" class="display-1">10</h1>
+                            </div>
+                            <div class="card-body p-0">
+                              <div class="d-flex justify-content-center">
+                                <img src="{{ url_for('video_feed') }}" class="img-fluid" style="width: 100%;border-radius: 5px;">
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Visualizzazione SOLO dopo la fine del countdown -->
+     <div class="container-fluid pt-5" style="display: none;" id="timer-container" >
+  <div class="row justify-content-around">
+    <div class="col-3 ">
+      <div class="row">
+        {% for key, value in diz|firstHalfExercises|items %}
+        <div class="col-12 col-md-6">
+  <div class="card mb-3 text-center text-white">
+    <div class="card-header bg-dark"><strong><span>{{key|upper}}</span></strong></div>
+    <div class="card-body">
+      <div class="d-flex justify-content-center">
+        <img src="/static/{{key}}.png" class="img-fluid" height="500" width="500">
+      </div>
+    </div>
+    <div class="card-footer bg-dark">
+        <strong><span id="{{key|lower}}" class="display-6"></span></strong>
+    </div>
+
+  </div>
+</div>
+
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-6">
+        <div class="text-center"> 
+          <span id="time_diff" class="text-danger"></span>
+        <h2> <span id="msg" class="text-danger"></span></h2>
+      </div>
+
+      <div class="card">
+        <div class="card-header bg-dark text-white d-flex justify-content-between">
+            <h2><strong><span id="reps" class="text-warning"></span></strong> reps of <strong><span id="action" class="text-warning"></span></strong></h2>
+       
+          <h1 id="timer" data-timer="0" class="ml-auto text-light font-weight-bold">00:00:00</h1>
+        </div>
+        <div class="card-body p-0">
+          <div class="d-flex justify-content-center">
+            <img src="{{ url_for('video_feed') }}" class="img-fluid" style="width: 100%;border-radius: 5px;">
+          </div>
+        </div>
+      </div>
+     
+
+    </div>
+
+    <div class="col-3">
+      <div class="row">
+        {% for key, value in diz|secondHalfExercises|items %}
+        <div class="col-12 col-md-6">
+          <div class="card mb-3 text-white text-center text-white">
+            <div class="card-header bg-dark"><strong>{{key|upper}}</strong></div>
+            <div class="card-body">
+              <div class="d-flex justify-content-center">
+                <img src="/static/{{key}}.png" class="img-fluid" height="500" width="500">
+              </div>
+            </div>
+           <div class="card-footer bg-dark">
+                <strong><span id="{{key|lower}}" class="display-6"></span></strong>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<footer class="text-center row text-white mt-5" style="position: fixed; bottom:0%; width: 100%; background-color:black; box-sizing: border-box;">
+  <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+    © 2023 | All rights reserved
+  </div>
+</footer>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+   
+</body>
+
+
+
+
+</html>
