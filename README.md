@@ -24,7 +24,7 @@ It guides users to start the training and provides powerful tool to execute exer
 
 ### Homepage 
 The homepage is the platform's landing page, featuring a concise HTML layout. It provides a brief overview of how the portal works and essential information, such as the need for ample space for movements.
-![Alt text](static/home.jpg)
+![Alt text](static/home.png)
 
 
 ### Form 
